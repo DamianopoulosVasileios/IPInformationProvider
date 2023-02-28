@@ -1,4 +1,5 @@
 ﻿using IPInformationProvider.API.Interfaces;
+using IPInformationProvider.API.Models;
 using IPInformationProvider.API.Static;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -14,36 +15,35 @@ namespace IPInformationProvider.API.Caching
             _memoryCache = memoryCache;
         }
 
-        public IIPs? GetFromCache(string iPAddress)
+        public IP? GetFromCache(string iPAddress)
         {
-            _memoryCache.TryGetValue(iPAddress, out IIPs? query);
+            _memoryCache.TryGetValue(iPAddress, out IP? query);
             return query;
         }
-        public void InsertOneOrManyToCache(IEnumerable<IIPs> iPs,bool invalidateCache = false)
+
+        public void InsertOneOrManyToCache(params IP[] iPs)
         {
             foreach (var ip in iPs)
             {
                 lock (ThisLock)
                 {
-                    if (!_memoryCache.TryGetValue(ip.CountryName, out IIPs? obj))
+                    if (!_memoryCache.TryGetValue(ip.IPAddress, out IP? original))
                     {
                         try
                         {
-                            _memoryCache.Set(ip.CountryName, ip);
+                            _memoryCache.Set(ip.IPAddress, ip);
                         }
                         catch
                         {
                             throw new Exception("Error while adding to cache");
                         }
                     }
-                    else if(invalidateCache==true && IPDetailsChangesCheck.CheckIPForChanges(obj, ip))
+                    else if (IPDetailsChangesCheck.CheckIPForChanges(original, ip))
                     {
-                        //Invalidates IP at cache if IP is found and dirty
                         _memoryCache.Remove(ip);
                     }
                 }
             }
         }
-
     }
 }

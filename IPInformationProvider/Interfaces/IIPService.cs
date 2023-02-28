@@ -1,9 +1,11 @@
-﻿namespace IPInformationProvider.API.Interfaces
+﻿using IPInformationProvider.API.Models;
+
+namespace IPInformationProvider.API.Interfaces
 {
     public interface IIPService
     {
-        Task<IIPs> GetInformation(string iPAddress);
+        Task<IP> GetInformation(string iPAddress);
         Task<bool> UpdateIPInformation();
-        Task<IEnumerable<IIPResponse>> GetReport(string[]? CountryCodes = null);
+        Task<IEnumerable<IPResponse>> GetReport(string[]? CountryCodes = null);
     }
 }

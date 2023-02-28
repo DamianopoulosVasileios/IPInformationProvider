@@ -1,8 +1,6 @@
-﻿using IPInformationProvider.API.Interfaces;
-
-namespace IPInformationProvider.API.Models
+﻿namespace IPInformationProvider.API.Models
 {
-    public class IPResponse : IIPResponse
+    public class IPResponse
     {
         public string CountryName { get; set; }
         public int AddressesCount { get; set; }
@@ -13,13 +11,6 @@ namespace IPInformationProvider.API.Models
             CountryName = countryName;
             AddressesCount = addressesCount;
             LastAddressUpdated = lastAddressUpdated;
-        }
-        public object SoftCopy(string countryName, int addressesCount, DateTime lastAddressUpdated)
-        {
-            CountryName = countryName;
-            AddressesCount = addressesCount;
-            LastAddressUpdated = lastAddressUpdated;
-            return this;
         }
     }
 }

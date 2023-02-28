@@ -1,23 +1,27 @@
 ﻿using IPInformationProvider.API.Interfaces;
+using IPInformationProvider.API.Models;
 using System.Data.SqlClient;
 
-namespace IPInformationProvider.API.Endpoints   
+namespace IPInformationProvider.API.Endpoints
 {
     public class IPReportEndpoint : IIPReportEndpoint
     {
-        private readonly IIPResponse _response;
+        private readonly IConfiguration _configuration;
 
-        public IPReportEndpoint(IIPResponse response)
+        public IPReportEndpoint(IConfiguration configuration)
         {
-            _response = response;
+            _configuration = configuration;
         }
-        public async Task<IEnumerable<IIPResponse>> GetReport(string[]? twoLetterCountryCodes = null)
+
+        public async Task<IEnumerable<IPResponse>> GetReport(string[]? twoLetterCountryCodes = null)
         {
-            var results = new List<IIPResponse>();
-            using (var connection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DbConnectionString"].ConnectionString))
+            var cn = _configuration.GetValue<string>("ConnectionStrings:DbConnectionString");
+
+            var results = new List<IPResponse>();
+            using (var connection = new SqlConnection(cn))
             {
                 await connection.OpenAsync();
-                string sql = "SELECT tbl.CountryName,Count(*) as AddressesCount,UpdatedAt FROM IPs tbl ";
+                string sql = "SELECT tbl.CountryName,Count(*) as AddressesCount,UpdatedAt FROM IP tbl ";
                 string where = (twoLetterCountryCodes == null) ? " " : " where tbl.TwoLetterCode in (@TwoLetterCode) ";
                 string groupBy = " GROUP BY tbl.CountryName";
 
@@ -37,7 +41,7 @@ namespace IPInformationProvider.API.Endpoints
                             var CountryName = reader.GetString(reader.GetOrdinal("CountryName"));
                             var AddressesCount = reader.GetInt32(reader.GetOrdinal("AddressesCount"));
                             var UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt"));
-                            results.Add((IIPResponse)_response.SoftCopy(CountryName, AddressesCount, UpdatedAt));
+                            results.Add(new IPResponse(CountryName, AddressesCount, UpdatedAt));
                         }
                     }
                 }

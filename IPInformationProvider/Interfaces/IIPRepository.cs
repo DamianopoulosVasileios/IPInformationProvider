@@ -1,11 +1,13 @@
-﻿namespace IPInformationProvider.API.Interfaces
+﻿using IPInformationProvider.API.Models;
+
+namespace IPInformationProvider.API.Interfaces
 {
     public interface IIPRepository
     {
-        Task<IEnumerable<IIPs>> GetAllAsync();
-        Task<IEnumerable<IIPs>> GetPartialAsync(int start, int batch);
-        Task<IIPs?> GetAsync(string id); 
-        Task<bool> InsertAsync(IEnumerable<IIPs> iPAddress);
-        Task<bool> UpdateAsync(IEnumerable<IIPs> iPAddress);
+        Task<IEnumerable<IP>> GetAllAsync();
+        Task<IP[]> GetPartialAsync(int start, int batch);
+        Task<IP?> GetAsync(string id);
+        Task<bool> InsertAsync(IEnumerable<IP> iPAddress);
+        Task<bool> UpdateAsync(IEnumerable<IP> iPAddress);
     }
 }

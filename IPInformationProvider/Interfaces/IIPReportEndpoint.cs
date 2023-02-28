@@ -1,7 +1,9 @@
-﻿namespace IPInformationProvider.API.Interfaces
+﻿using IPInformationProvider.API.Models;
+
+namespace IPInformationProvider.API.Interfaces
 {
     public interface IIPReportEndpoint
     {
-        Task<IEnumerable<IIPResponse>> GetReport(string[]? twoLetterCountryCodes = null);
+        Task<IEnumerable<IPResponse>> GetReport(string[]? twoLetterCountryCodes = null);
     }
 }
